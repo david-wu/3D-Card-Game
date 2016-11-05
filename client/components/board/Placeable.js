@@ -4,7 +4,7 @@ const TreeNode = require('./TreeNode.js');
 class Placeable extends TreeNode{
 
 	constructor(options){
-		super();
+		super(options);
 		_.extend(this, options)
 		_.defaults(this, {
 			pos: {
@@ -14,11 +14,10 @@ class Placeable extends TreeNode{
 				angle: 0,
 			},
 		})
-		this.setChildren(this.children);
 	}
 
-	moveTo(location){
-		_.extend(this.pos, location);
+	moveTo(pos){
+		_.extend(this.pos, pos);
 	}
 
 	layoutDeep(){
@@ -29,12 +28,17 @@ class Placeable extends TreeNode{
 				y: 0,
 				z: 0,
 				angle: node.parent ? node.parent.absPos.angle+node.pos.angle : node.pos.angle,
-				rotationMatrix: 0
 			};
+
+			// Reuse rotationMatrix if no change to absAngle
+			if(!node.pos.angle && node.parent){
+				node.absPos.rotationMatrix = node.parent.absPos.rotationMatrix
+			}else{
+				node.absPos.rotationMatrix = getRotationMatrix(node.absPos.angle)
+			}
 		});
 
 		this.depthFirstTraverse(function(node){
-			node.absPos.rotationMatrix = node.absPos.rotationMatrix || getRotationMatrix(node.absPos.angle);
 			rotatePos(node.pos, node.absPos.rotationMatrix, node.absPos);
 			if(node.parent){
 				sumPos(node.absPos, node.parent.absPos);

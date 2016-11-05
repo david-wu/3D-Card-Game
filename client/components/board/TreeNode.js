@@ -6,20 +6,20 @@ class TreeNode{
 		_.defaults(this, {
 			children: []
 		})
-		this.setChildren(this.children);
+		this.setChildren(this.children)
 	}
 
 	setChildren(children=[]){
-		this.children = children;
+		this.children = children
 		_.each(this.children, (child)=>{
-			child.parent = this;
+			child.parent = this
 		});
 	}
 
 	getLeaves(){
 		const leaves = [];
 		this.depthFirstTraverse(function(){
-			if(!node.children){
+			if(!node.children.length){
 				leaves.push(node);
 			}
 		})
