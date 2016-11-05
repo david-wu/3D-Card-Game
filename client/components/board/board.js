@@ -1,9 +1,9 @@
 const cardGroupMarginTop = 15;
 const THREE = require('three-js')();
 
-const Placeable = require('./Placeable.js');
+const Renderable = require('./Renderable.js');
 
-class Card extends Placeable{
+class Card extends Renderable{
 
 	constructor(options){
 		super();
@@ -38,7 +38,7 @@ class Card extends Placeable{
 }
 
 
-class CardGroup extends Placeable{
+class CardGroup extends Renderable{
 
 	constructor(options){
 		super()
@@ -94,7 +94,7 @@ class CardGroup extends Placeable{
 
 }
 
-class Player extends Placeable{
+class Player extends Renderable{
 
 	constructor(options){
 		super()
@@ -136,7 +136,7 @@ class Player extends Placeable{
 
 }
 
-class Board extends Placeable{
+class Board extends Renderable{
 
 	constructor(options){
 		super()

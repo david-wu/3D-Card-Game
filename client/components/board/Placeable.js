@@ -1,4 +1,3 @@
-
 const TreeNode = require('./TreeNode.js');
 
 class Placeable extends TreeNode{
@@ -44,33 +43,6 @@ class Placeable extends TreeNode{
 				sumPos(node.absPos, node.parent.absPos);
 			}
 		})
-	}
-
-	renderDeep(context){
-		this.layoutDeep();
-		this.depthFirstTraverse(function(node){
-			node.render(context);
-		})
-	}
-
-	render(context){
-
-		if(!this.el){
-			this.el = document.createElement('div');
-			_.extend(this.el.style, {
-				transition: '0.2s',
-				position: 'absolute'
-			})
-			context.appendChild(this.el);
-		}
-
-		const pos = this.absPos
-		_.extend(this.el.style, {
-			'transform': `translate3d(${pos.x}px,${-pos.y}px,${pos.z}px)rotate(${pos.angle}deg)`,
-			'z-index': pos.z
-		})
-
-		return this.el;
 	}
 
 }
