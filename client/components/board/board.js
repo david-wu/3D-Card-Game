@@ -1,240 +1,17 @@
 const cardGroupMarginTop = 15;
 const THREE = require('three-js')();
 
-class TreeNode{
-	constructor(options){
-		_.extend(this, options)
-		_.defaults(this, {
-			children: []
-		})
-		this.setChildren(this.children);
-	}
-
-	setChildren(children=[]){
-		this.children = children;
-		_.each(this.children, (child)=>{
-			child.parent = this;
-		});
-	}
-
-	getLeaves(){
-		const leaves = [];
-		this.depthFirstTraverse(function(){
-			if(!node.children){
-				leaves.push(node);
-			}
-		})
-		return leaves;
-	}
-
-	iterateUpReversed(iteratee){
-		const nodes = [];
-		this.iterateUp(function(node){
-			nodes.push(node);
-		});
-		for(var i=nodes.length-1; i>=0; i--){
-			iteratee(nodes[i], nodes[i+1]);
-		}
-	}
-
-	iterateUp(iteratee){
-		iteratee(this);
-		let pointer = this;
-		while(pointer.parent){
-			pointer = pointer.parent
-			iteratee(pointer);
-		}
-	}
-
-	depthFirstTraverse(iteratee){
-		iteratee(this);
-		_.each(this.children, function(child){
-			child.depthFirstTraverse(iteratee);
-		})
-	}
-
-	breadthFirstTraverse(iteratee){
-		iteratee(this);
-
-		const stack = this.children.slice();
-		const otherStack = [];
-		while(stack.length){
-			for(var i=0; i<stack.length; i++){
-				iteratee(stack[i]);
-				[].push.apply(otherStack, stack[i].children);
-			}
-			stack.length = 0;
-			[].push.apply(stack, otherStack);
-			otherStack.length=0;
-		}
-	}
-
-}
-
-
-
-function getRotationMatrix(angle){
-	const theta = -angle*Math.PI/180;
-	const sinTheta = Math.sin(theta);
-	const cosTheta = Math.cos(theta);
-	return [
-		[cosTheta, -sinTheta],
-		[sinTheta, cosTheta]
-	];
-}
-
-function rotatePos(pos, rotationMatrix, target={}){
-	const x = pos.x*rotationMatrix[0][0] + pos.y*rotationMatrix[0][1];
-	const y = pos.x*rotationMatrix[1][0] + pos.y*rotationMatrix[1][1];
-	target.x = x;
-	target.y = y;
-	return target;
-}
-
-function sumPos(pos1, pos2){
-	pos1.x += pos2.x || 0;
-	pos1.y += pos2.y || 0;
-	pos1.z += pos2.z || 0;
-}
-
-class Placeable extends TreeNode{
-
-	constructor(options){
-		super();
-		_.extend(this, options)
-		_.defaults(this, {
-			pos: {
-				x: 0,
-				y: 0,
-				z: 0,
-				angle: 0,
-			},
-		})
-		this.setChildren(this.children);
-	}
-
-	moveTo(location){
-		_.extend(this.pos, location);
-	}
-
-	layoutDeep(){
-
-		this.depthFirstTraverse(function(node){
-			node.absPos = {
-				x: 0,
-				y: 0,
-				z: 0,
-				angle: node.parent ? node.parent.absPos.angle+node.pos.angle : node.pos.angle,
-				rotationMatrix: 0
-			};
-		});
-
-		this.depthFirstTraverse(function(node){
-			node.absPos.rotationMatrix = node.absPos.rotationMatrix || getRotationMatrix(node.absPos.angle);
-			rotatePos(node.pos, node.absPos.rotationMatrix, node.absPos);
-			if(node.parent){
-				sumPos(node.absPos, node.parent.absPos);
-			}
-		})
-	}
-
-	renderDeep(context){
-		this.layoutDeep();
-		this.depthFirstTraverse(function(node){
-			node.render(context);
-		})
-	}
-
-	render(context){
-
-		if(!this.el){
-			this.el = document.createElement('div');
-			_.extend(this.el.style, {
-				transition: '0.2s',
-				position: 'absolute'
-			})
-			context.appendChild(this.el);
-		}
-
-		const pos = this.absPos
-		_.extend(this.el.style, {
-			// 'transform': 'translate3d('+pos.x+'px, '+pos.y+'px,'+pos.z+'px)',
-			// angle rotates each individual element not around the right point
-			'transform': 'translate3d('+pos.x+'px, '+ (-pos.y) +'px,'+pos.z+'px)rotate('+pos.angle+'deg)',
-			'z-index': pos.z
-		})
-
-		return this.el;
-	}
-
-	// getRotationMatrix(angle){
-	// 	const theta = -angle*Math.PI/180;
-	// 	const sinTheta = Math.sin(theta);
-	// 	const cosTheta = Math.cos(theta);
-	// 	return [
-	// 		[cosTheta, -sinTheta],
-	// 		[sinTheta, cosTheta]
-	// 	];
-	// }
-
-	// rotatedPos(rotationMatrix){
-	// 	return {
-	// 		x: this.pos.x*rotationMatrix[0][0] + this.pos.y*rotationMatrix[0][1],
-	// 		y: this.pos.x*rotationMatrix[1][0] + this.pos.y*rotationMatrix[1][1],
-	// 	};
-	// }
-
-	getAbsPos(){
-
-		const absPos = {
-			x: 0,
-			y: 0,
-			z: 0,
-			angle: 0,
-		};
-
-		this.iterateUpReversed(function(obj, prevObj){
-
-			let adjustedPos;
-			if(prevObj){
-				absPos.angle += obj.pos.angle;
-
-				const theta = absPos.angle*Math.PI/180;
-				const sinTheta = Math.sin(theta);
-				const cosTheta = Math.cos(theta);
-				const rotationMatrix = [
-					[cosTheta, -sinTheta],
-					[sinTheta, cosTheta]
-				];
-
-				adjustedPos = obj.rotatedPos(rotationMatrix);
-
-			}else{
-				adjustedPos = obj.pos
-			}
-
-			absPos.x += adjustedPos.x;
-			absPos.y += adjustedPos.y;
-			absPos.z += adjustedPos.z || 0;
-
-		})
-
-		// this.iterateUp(function(obj){
-		// 	absPos.x += obj.pos.x;
-		// 	absPos.y += obj.pos.y;
-		// 	absPos.z += obj.pos.z;
-		// 	absPos.angle += obj.pos.angle;
-		// });
-		return absPos;
-	}
-}
-
+const Placeable = require('./Placeable.js');
 
 class Card extends Placeable{
 
 	constructor(options){
 		super();
 		_.extend(this, options);
+		_.defaults(this, {
+			width: 65,
+			height: 100,
+		})
 	}
 
 	flip(){
@@ -246,10 +23,9 @@ class Card extends Placeable{
 		if(!this.innerEl){
 			this.innerEl = document.createElement('div');
 			placedEl.appendChild(this.innerEl);
-			// this.innerEl.className = 'card';
 			_.extend(this.innerEl.style, {
-				'width': '65px',
-				'height': '100px',
+				'width': this.width+'px',
+				'height': this.height+'px',
 				'border': '2px solid black',
 				'border-radius': '4px',
 			})
@@ -268,7 +44,6 @@ class CardGroup extends Placeable{
 		super()
 		_.extend(this, options);
 		_.defaults(this, {
-			// cardMargin: 15
 		})
 
 		this.setChildren(_.map(this.children, function(child){
@@ -417,9 +192,10 @@ class Board extends Placeable{
 		});
 	}
 
-
 }
 
+
+module.exports = Board;
 
 module.exports = new Board({
 	dimensions: [1000, 1000],
@@ -575,5 +351,3 @@ module.exports = new Board({
 	]
 });
 
-
-// module.exports = Board;
