@@ -1,5 +1,7 @@
 const cardGroupMarginTop = 15;
 const THREE = require('three-js')();
+const TWEEN = require('tween.js');
+require('./CSS3DRenderer.js')(THREE);
 
 const Renderable = require('./Renderable.js');
 
@@ -18,22 +20,81 @@ class Card extends Renderable{
 		this.faceUp = !this.faceUp;
 	}
 
-	render(context){
-		const placedEl = super.render(context)
-		if(!this.innerEl){
-			this.innerEl = document.createElement('div');
-			placedEl.appendChild(this.innerEl);
-			_.extend(this.innerEl.style, {
+	render(){
+
+		// const threeContainer = super.render();
+
+		if(!this.mesh){
+			const element = document.createElement( 'div' );
+			element.className = 'element';
+
+			_.extend(element.style, {
 				'width': this.width+'px',
 				'height': this.height+'px',
 				'border': '2px solid black',
 				'border-radius': '4px',
+				'background-color': this.color,
 			})
+
+			var number = document.createElement( 'div' );
+			number.className = 'number';
+			number.textContent = this.name;
+			element.appendChild(number);
+
+			// document.body.appendChild(element)
+
+			this.mesh = new THREE.CSS3DObject(element)
+
+			this.components.scene.add(this.mesh);
 		}
 
-		_.extend(this.innerEl.style, {
-			'background-color': this.color,
+		const pos = this.absPos
+
+	TWEEN.removeAll();
+
+// console.log(this.mesh.position, pos)
+		// const duration = 100
+		// new TWEEN.Tween(this.mesh.position)
+		// 	.to({
+		// 		x: pos.x,
+		// 		y: pos.y,
+		// 		z: pos.z,
+		// 	}, 100)
+			// .call(()=>{
+			// 	console.log(this.mesh.position)
+			// })
+			// .easing(TWEEN.Easing.Exponential.InOut)
+			// .start();
+
+
+		_.extend(this.mesh.position, {
+			x: -pos.x,
+			y: pos.y,
+			z: pos.z,
 		})
+		_.extend(this.mesh.rotation, {
+			z: pos.angle*Math.PI/180,
+			x: 0,
+			y: 0,
+		})
+
+
+
+
+		// if(!this.innerEl){
+		// 	this.innerEl = document.createElement('div');
+		// 	container.appendChild(this.innerEl);
+		// 	_.extend(this.innerEl.style, {
+		// 		'width': this.width+'px',
+		// 		'height': this.height+'px',
+		// 		'border': '2px solid black',
+		// 		'border-radius': '4px',
+		// 	})
+		// }
+
+		// _.extend(this.innerEl.style, {
+		// 	'background-color': this.color,
+		// })
 	}
 }
 
