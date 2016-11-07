@@ -5,70 +5,59 @@ require('./TrackBallControls.js')(THREE);
 const Placeable = require('./Placeable.js');
 
 
+class Drawer{
 
-function initComponents(options={}){
+	constructor(options={}){
+		_.defaults(options, {
+			WIDTH: 1000,
+			HEIGHT: 1000,
+		})
 
-	_.defaults(options, {
-		WIDTH: 1000,
-		HEIGHT: 1000,
-	})
+		_.defaults(options, {
+			VIEW_ANGLE: 45,
+			ASPECT: options.WIDTH / options.HEIGHT,
+			NEAR: 0.1,
+			FAR: 10000,
+			context: document.getElementById('root'),
+		});
 
-	_.defaults(options, {
-		VIEW_ANGLE: 45,
-		ASPECT: options.WIDTH / options.HEIGHT,
-		NEAR: 0.1,
-		FAR: 10000,
-		context: document.getElementById('root'),
-	});
+		const components = this.components = {
+			// renderer: new THREE.WebGLRenderer(),
+			renderer: new THREE.CSS3DRenderer(),
+			camera: new THREE.PerspectiveCamera(options.VIEW_ANGLE, options.ASPECT, options.NEAR, options.FAR),
+			scene: new THREE.Scene(),
+			tween: TWEEN,
+		};
 
-	const components = {
-		renderer: new THREE.CSS3DRenderer(),
-		// renderer: new THREE.WebGLRenderer(),
-		camera: new THREE.PerspectiveCamera(options.VIEW_ANGLE, options.ASPECT, options.NEAR, options.FAR),
-		scene: new THREE.Scene(),
-	};
+		options.context.appendChild(components.renderer.domElement);
+		components.scene.add(components.camera)
+		components.camera.position.z = 4000
+		components.renderer.setSize(options.WIDTH, options.HEIGHT)
+		components.controls = new THREE.TrackballControls(components.camera, components.renderer.domElement );
+		components.controls.rotateSpeed = 0.5;
 
-	options.context.appendChild(components.renderer.domElement);
+		this.startRendering(components)
+	}
 
-	components.scene.add(components.camera)
-	components.camera.position.z = 4000
-	// components.camera.position.x = 500
-	// components.camera.position.y = 500
+	startRendering(components){
+		setInterval(function(){
+			components.controls.update();
+			components.renderer.render(components.scene, components.camera);		
+			components.tween.update();
+		}, 16);
+	}
 
-	components.renderer.setSize(options.WIDTH, options.HEIGHT)
+	pointLight(){
+		const pointLight = new THREE.PointLight(0xFFFFFF);
+		pointLight.position.x = 10;
+		pointLight.position.y = 50;
+		pointLight.position.z = 130;
+		return pointLight;
+	}
 
-	linkComponents(components)
-
-	components.controls = new THREE.TrackballControls(components.camera, components.renderer.domElement );
-	components.controls.rotateSpeed = 0.5;
-
-	return components;
 }
 
-
-function pointLight(){
-	const pointLight = new THREE.PointLight(0xFFFFFF);
-	pointLight.position.x = 10;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
-	return pointLight;
-}
-
-function linkComponents(components){
-	// components.scene.add(boxMesh());
-	// components.scene.add(pointLight());
-
-	setInterval(function(){
-		components.controls.update();
-		// components.camera.rotation.z+=0.01;
-
-		components.renderer.render(components.scene, components.camera);		
-		TWEEN.update();
-	},16)
-}
-
-
-const components = initComponents();
+const components = new Drawer().components;
 
 class Renderable extends Placeable{
 
@@ -87,46 +76,7 @@ class Renderable extends Placeable{
 		})
 	}
 
-	// This will return some container that the implementer can super like in PIXI
-	// Or use my own container
 	render(context){
-
-		// if(!this.container){
-		// 	this.container = new THREE.Object3D();
-		// 	components.scene.add(this.container);
-		// 	// components.scene.add(boxMesh());
-		// }
-
-		// const pos = this.absPos
-
-		// _.extend(this.container.position, {
-		// 	x: pos.x,
-		// 	y: pos.y,
-		// 	z: pos.z,
-		// })
-		// _.extend(this.container.rotation, {
-		// 	z: pos.angle
-		// })
-
-		// 	this.container.add(boxMesh())
-		// return this.container;
-
-		// if(!this.el){
-		// 	this.el = document.createElement('div');
-		// 	_.extend(this.el.style, {
-		// 		transition: '0.2s',
-		// 		position: 'absolute'
-		// 	})
-		// 	context.appendChild(this.el);
-		// }
-
-		// const pos = this.absPos
-		// _.extend(this.el.style, {
-		// 	'transform': `translate3d(${pos.x}px,${-pos.y}px,${pos.z}px)rotate(${pos.angle}deg)`,
-		// 	'z-index': pos.z
-		// })
-
-		// return this.el;
 	}
 
 }
