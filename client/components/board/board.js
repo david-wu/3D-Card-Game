@@ -1,6 +1,5 @@
 const TWEEN = require('tween.js');
 const THREE = require('three-js')();
-require('./CSS3DRenderer.js')(THREE);
 
 const Renderable = require('./Renderable.js');
 
@@ -19,11 +18,18 @@ class Card extends Renderable{
 		this.faceUp = !this.faceUp;
 	}
 
-	render(){
+	clickHandler(){
+		console.log(this);
+	}
+
+	hoverHandler(){
+		console.log(this);
+	}
+
+	setPosition(){
 
 		if(!this.mesh){
 			const element = document.createElement( 'div' );
-			element.className = 'element';
 
 			_.extend(element.style, {
 				'width': this.width+'px',
@@ -33,8 +39,10 @@ class Card extends Renderable{
 				'background-color': this.color,
 			})
 
+			element.addEventListener('click', this.clickHandler.bind(this));
+			element.addEventListener('hover', this.hoverHandler.bind(this));
+
 			var number = document.createElement( 'div' );
-			number.className = 'number';
 			number.textContent = this.name;
 			element.appendChild(number);
 			this.mesh = new THREE.CSS3DObject(element)
@@ -56,9 +64,9 @@ class Card extends Renderable{
 
 		new TWEEN.Tween(this.mesh.rotation)
 			.to({
-				y: this.mesh.rotation.y+(Math.PI),
+				y: 0,//this.faceUp ? (Math.PI) : 0,
 				z: pos.angle*Math.PI/180,
-			}, duration*Math.random() + duration)
+			}, duration)
 			.easing(TWEEN.Easing.Exponential.InOut)
 			.start();
 

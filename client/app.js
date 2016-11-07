@@ -4,10 +4,14 @@ global.CSSModules = require('react-css-modules');
 global._ = require('lodash');
 
 
+const THREE = require('three-js')();
+require('./lib/CSS3DRenderer.js')(THREE);
+require('./lib/TrackBallControls.js')(THREE);
+
 
 const board = require('./components/board/board.js');
 
-var render = board.renderDeep.bind(board, document.getElementById('root'));
+var render = board.setPositionDeep.bind(board, document.getElementById('root'));
 
 // render();
 setInterval(function(){

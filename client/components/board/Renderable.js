@@ -1,7 +1,6 @@
 
 const TWEEN = require('tween.js');
 const THREE = require('three-js')();
-require('./TrackBallControls.js')(THREE);
 const Placeable = require('./Placeable.js');
 
 
@@ -47,13 +46,13 @@ class Drawer{
 		}, 16);
 	}
 
-	pointLight(){
-		const pointLight = new THREE.PointLight(0xFFFFFF);
-		pointLight.position.x = 10;
-		pointLight.position.y = 50;
-		pointLight.position.z = 130;
-		return pointLight;
-	}
+	// pointLight(){
+	// 	const pointLight = new THREE.PointLight(0xFFFFFF);
+	// 	pointLight.position.x = 10;
+	// 	pointLight.position.y = 50;
+	// 	pointLight.position.z = 130;
+	// 	return pointLight;
+	// }
 
 }
 
@@ -69,14 +68,14 @@ class Renderable extends Placeable{
 		})
 	}
 
-	renderDeep(context){
+	setPositionDeep(context){
 		this.layoutDeep();
 		this.depthFirstTraverse(function(node){
-			node.render(context);
+			node.setPosition(context);
 		})
 	}
 
-	render(context){
+	setPosition(context){
 	}
 
 }
