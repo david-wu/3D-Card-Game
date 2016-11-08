@@ -8,12 +8,12 @@ class Board extends Renderable{
 		super()
 		_.extend(this, options);
 		_.defaults(this, {
+			dimensions: [1800, 1800],
+			players: [],
 			centerGroup: {
 				groupType: 'center',
 				children: [],
 			},
-			players: [],
-			dimensions: [0, 0]
 		})
 
 		this.players = _.map(this.players, function(player){

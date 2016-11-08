@@ -8,7 +8,6 @@ require('./lib/TrackBallControls.js')(THREE);
 const Board = require('./components/board/Board.js');
 
 const board = new Board({
-	dimensions: [1000, 1000],
 	centerGroup: {
 		groupType: 'center',
 		children: [
