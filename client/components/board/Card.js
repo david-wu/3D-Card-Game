@@ -70,14 +70,14 @@ class Card extends Renderable{
 	}
 
 	tweenPos(){
-		const tweenTime = 500;
+		const tweenTime = 400+(Math.random()*100);
 		const halfPoint = {
 			x: this.mesh.position.x+(this.absPos.x-this.mesh.position.x)/2,
 			y: this.mesh.position.y+(this.absPos.y-this.mesh.position.y)/2,
 			z: 100+this.mesh.position.z+(this.absPos.z-this.mesh.position.z)/2,
 		};
 		new TWEEN.Tween(this.mesh.position)
-			.to(halfPoint, tweenTime*Math.random() + tweenTime)
+			.to(halfPoint, tweenTime)
 			.easing(TWEEN.Easing.Sinusoidal.In)
 			.onComplete(()=>{
 
@@ -86,7 +86,7 @@ class Card extends Renderable{
 						x: this.absPos.x,
 						y: this.absPos.y,
 						z: this.absPos.z,
-					}, tweenTime*Math.random() + tweenTime)
+					}, tweenTime)
 					.easing(TWEEN.Easing.Sinusoidal.Out)
 					.onComplete(function(){
 
@@ -98,7 +98,7 @@ class Card extends Renderable{
 	}
 
 	tweenRotation(){
-		const tweenTime = 500;
+		const tweenTime = 400+(Math.random()*100);
 		setTimeout(()=>{
 			const targetRotation = {
 				z: this.absPos.angle*Math.PI/180,
@@ -113,10 +113,7 @@ class Card extends Renderable{
 	}
 
 	setMeshPosition(){
-		const tweenTime = 500;
 		this.mesh = this.mesh || this.makeMesh();
-
-
 		if(!_.isMatch(this.absPos, this.mesh.position)){
 			this.tweenPos();			
 		}
