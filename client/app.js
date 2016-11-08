@@ -1,45 +1,188 @@
-global.React = require('react');
-global.Component = require('react').Component;
-global.CSSModules = require('react-css-modules');
 global._ = require('lodash');
-
 
 const THREE = require('three-js')();
 require('./lib/CSS3DRenderer.js')(THREE);
 require('./lib/TrackBallControls.js')(THREE);
 
 
-const board = require('./components/board/board.js');
+const Board = require('./components/board/Board.js');
 
-var render = board.setPositionDeep.bind(board, document.getElementById('root'));
+const board = new Board({
+	dimensions: [1000, 1000],
+	centerGroup: {
+		groupType: 'center',
+		children: [
+			{
+				name: 'fireball',
+				color: 'red',
+			},
+		]
+	},
+	players: [
+		{
+			name: 'bill1',
+			hand: [
+				{
+					name: 'fireball',
+					color: 'red',
+				},
+				{
+					name: 'bloop',
+					color: 'red',
+				},
+				{
+					name: 'bloop2',
+					color: 'red',
+				},
+				{
+					name: 'bloop3',
+					color: 'red',
+				},
+				{
+					name: 'bloop4',
+					color: 'red',
+				},
+			],
+			deck: [
+				{
+					name: 'blur2',
+					color: 'purple',
+				}
+			],
+		},
+		{
+			name: 'bill2',
+			hand: [
+				{
+					name: 'fireball',
+					color: 'red',
+				},
+				{
+					name: 'bloop',
+					color: 'green',
+				},
+				{
+					name: 'bloop2',
+					color: 'green',
+				},
+				{
+					name: 'bloop3',
+					color: 'green',
+				},
+				{
+					name: 'bloop4',
+					color: 'green',
+				},
+			],
+			deck: [
+				{
+					name: 'blur2',
+					color: 'purple',
+				}
+			],
+		},
+		{
+			name: 'bill3',
+			hand: [
+				{
+					name: 'fireball',
+					color: 'red',
+				},
+				{
+					name: 'bloop',
+					color: 'green',
+				},
+				{
+					name: 'bloop2',
+					color: 'blue',
+				},
+				{
+					name: 'bloop3',
+					color: 'yellow',
+				},
+				{
+					name: 'bloop4',
+					color: 'orange',
+				},
+			],
+			deck: [
+				{
+					name: 'blur2',
+					color: 'purple',
+				}
+			],
+		},
+		{
+			name: 'bill4',
+			hand: [
+				{
+					name: 'fireball',
+					color: 'red',
+				},
+				{
+					name: 'bloop',
+					color: 'green',
+				},
+				{
+					name: 'bloop2',
+					color: 'blue',
+				},
+				{
+					name: 'bloop3',
+					color: 'yellow',
+				},
+				{
+					name: 'bloop4',
+					color: 'orange',
+				},
+			],
+			deck: [
+				{
+					name: 'blur2',
+					color: 'purple',
+				},
+				{
+					name: 'blur2',
+					color: 'purple',
+				},
+				{
+					name: 'blur2',
+					color: 'purple',
+				},
+			],
+		},
+	]
+});
 
-// render();
-setInterval(function(){
-	board.positionPlayers();
-	board.positionCenterGroup();
-	_.each(board.players, function(player){
-		// player.hand.shuffle();
-		// player.hand.positionAsHand();
+board.setMeshPositionDeep();
 
-		const hand = player.hand;
+let selectedCard;
+board.on('cardClick', function(card){
 
-		player.hand = player.field
-			.positionAsHand();
+	console.log(card.getRoot('Player'));
 
-		player.field = hand
-			.positionAsField();
-	})
-	// board.players = _.shuffle(board.players);
-
-	render();
-}, 1000)
+	if(selectedCard){
+		card.swapPosition(selectedCard);
+		board.setMeshPositionDeep();
+		selectedCard = undefined;
+	}else{
+		selectedCard = card;
+	}
+});
 
 
+// setInterval(function(){
+// 	_.each(board.players, function(player){
+// 		player.hand.shuffle();
+
+// 		let type = player.field.groupType
+// 		player.field.groupType = player.hand.groupType
+// 		player.hand.groupType = type
+
+// 	})
+// 	board.players = _.shuffle(board.players);
+// 	board.setMeshPositionDeep();
+// }, 1000)
 
 
-// const ReactDom = require('react-dom');
-// const Login = require('./components/login/login.jsx');
-// ReactDom.render(
-// 	<Login></Login>,
-// 	document.getElementById('root')
-// );
+

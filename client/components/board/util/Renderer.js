@@ -1,10 +1,7 @@
-
 const TWEEN = require('tween.js');
 const THREE = require('three-js')();
-const Placeable = require('./Placeable.js');
 
-
-class Drawer{
+class Renderer{
 
 	constructor(options={}){
 		_.defaults(options, {
@@ -16,12 +13,11 @@ class Drawer{
 			VIEW_ANGLE: 45,
 			ASPECT: options.WIDTH / options.HEIGHT,
 			NEAR: 0.1,
-			FAR: 10000,
+			FAR: 2000,
 			context: document.getElementById('root'),
 		});
 
 		const components = this.components = {
-			// renderer: new THREE.WebGLRenderer(),
 			renderer: new THREE.CSS3DRenderer(),
 			camera: new THREE.PerspectiveCamera(options.VIEW_ANGLE, options.ASPECT, options.NEAR, options.FAR),
 			scene: new THREE.Scene(),
@@ -34,51 +30,17 @@ class Drawer{
 		components.renderer.setSize(options.WIDTH, options.HEIGHT)
 		components.controls = new THREE.TrackballControls(components.camera, components.renderer.domElement );
 		components.controls.rotateSpeed = 0.5;
-
-		this.startRendering(components)
 	}
 
-	startRendering(components){
+	startRendering(){
+		const components = this.components;
 		setInterval(function(){
 			components.controls.update();
-			components.renderer.render(components.scene, components.camera);		
 			components.tween.update();
+			components.renderer.render(components.scene, components.camera);
 		}, 16);
 	}
 
-	// pointLight(){
-	// 	const pointLight = new THREE.PointLight(0xFFFFFF);
-	// 	pointLight.position.x = 10;
-	// 	pointLight.position.y = 50;
-	// 	pointLight.position.z = 130;
-	// 	return pointLight;
-	// }
-
 }
 
-const components = new Drawer().components;
-
-class Renderable extends Placeable{
-
-	constructor(options){
-		super(options);
-		_.extend(this, options)
-		_.defaults(this, {
-			components: components
-		})
-	}
-
-	setPositionDeep(context){
-		this.layoutDeep();
-		this.depthFirstTraverse(function(node){
-			node.setPosition(context);
-		})
-	}
-
-	setPosition(context){
-	}
-
-}
-
-module.exports = Renderable;
-
+module.exports = Renderer;

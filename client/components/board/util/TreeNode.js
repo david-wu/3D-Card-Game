@@ -1,12 +1,33 @@
+const EventEmitter = require('events');
 
-class TreeNode{
+class TreeNode extends EventEmitter{
 
 	constructor(options){
+		super();
 		_.extend(this, options)
 		_.defaults(this, {
-			children: []
+			nodeId: _.uniqueId,
+			children: [],
 		})
 		this.setChildren(this.children)
+	}
+
+	getChildIndex(target){
+		return _.findIndex(this.children, function(child){
+			return child===target;
+		});
+	}
+
+	addChild(target, index=0){
+		this.children.splice(index, 0, target);
+		target.parent = this;
+	}
+
+	removeChild(target){
+		const index = this.getChildIndex(target);
+		this.children.splice(index, 1);
+		target.parent = undefined;
+		return index;
 	}
 
 	setChildren(children=[]){
@@ -14,6 +35,19 @@ class TreeNode{
 		_.each(this.children, (child)=>{
 			child.parent = this
 		});
+	}
+
+	getRoot(constructorName){
+		let pointer = this
+		if(pointer.constructor.name===constructorName){
+			return pointer
+		}
+		while(pointer.parent){
+			pointer = pointer.parent
+			if(pointer.constructor.name===constructorName){
+				return pointer
+			}
+		}
 	}
 
 	getLeaves(){
