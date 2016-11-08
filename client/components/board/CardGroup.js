@@ -49,7 +49,7 @@ const groupTypeIndex = {
 				card.moveTo({
 					x: (i*75)-187.5,
 					y: 55,
-					z: i,
+					z: 0,
 				});
 				card.faceUp = true;
 			});
@@ -62,7 +62,7 @@ const groupTypeIndex = {
 				card.moveTo({
 					x: (i*75)-187.5,
 					y: -55,
-					z: i,
+					z: 0,
 				});
 				card.faceUp = true;
 			});
@@ -75,7 +75,7 @@ const groupTypeIndex = {
 				card.moveTo({
 					x: -262.5,
 					y: 0,
-					z: i,
+					z: 20-(i*2),
 				});
 				card.faceUp = false;
 			});
