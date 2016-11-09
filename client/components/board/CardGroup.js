@@ -75,7 +75,7 @@ const groupTypeIndex = {
 				card.moveTo({
 					x: -262.5,
 					y: 0,
-					z: 20-(i*2),
+					z: (i*cards.length)-i,
 				});
 				card.faceUp = false;
 			});
