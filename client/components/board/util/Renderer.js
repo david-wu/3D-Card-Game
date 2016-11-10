@@ -26,21 +26,11 @@ class Renderer{
 
 		options.context.appendChild(components.renderer.domElement);
 		components.scene.add(components.camera)
-		components.camera.position.z = 4000
-		// components.camera.position.x = 4000
-		components.camera.position.y = -4000
-
-		new TWEEN.Tween(components.camera.position)
-			.to({
-				x: 0,
-				y: -2000,
-				z: 500,
-			}, 3000)
-			.easing(TWEEN.Easing.Cubic.InOut)
-			.start();
 
 
 		components.renderer.setSize(options.WIDTH, options.HEIGHT)
+
+
 		components.controls = new THREE.TrackballControls(components.camera, components.renderer.domElement );
 		components.controls.rotateSpeed = 0.5;
 	}

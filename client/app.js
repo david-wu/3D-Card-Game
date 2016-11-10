@@ -155,10 +155,12 @@ const board = new Board({
 
 board.setMeshPositionDeep();
 
+
 let selectedCard;
 board.on('cardClick', function(card){
 
-	console.log(card.getRoot('Player'));
+	const player = card.getRoot('Player');
+	board.setCameraOnPlayer(player);
 
 	if(selectedCard){
 		card.swapPosition(selectedCard);

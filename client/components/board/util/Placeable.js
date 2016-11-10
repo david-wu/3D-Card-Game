@@ -51,6 +51,11 @@ class Placeable extends TreeNode{
 		})
 	}
 
+	getRotatedPosition(angle){
+		const rotationMatrix = getRotationMatrix(angle)
+		return rotatePos(this.pos, rotationMatrix);
+	}
+
 }
 
 function getRotationMatrix(angle){
