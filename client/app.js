@@ -7,6 +7,8 @@ require('./lib/TrackBallControls.js')(THREE);
 
 const Board = require('./components/board/Board.js');
 
+
+const colors = ['red', 'purple', 'yellow', 'green', 'orange'];
 const board = new Board({
 	renderer: renderer,
 	players: [
@@ -15,30 +17,174 @@ const board = new Board({
 			hand: [
 				{
 					name: 'fireball',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop2',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop3',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop4',
-					color: 'red',
+					color: _.sample(colors),
 				},
 			],
 			deck: [
 				{
 					name: 'blur2',
-					color: 'purple',
-				}
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
+				{
+					name: 'blur2',
+					color: _.sample(colors),
+				},
 			],
 		},
 		{
@@ -46,29 +192,29 @@ const board = new Board({
 			hand: [
 				{
 					name: 'fireball',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop',
-					color: 'green',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop2',
-					color: 'green',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop3',
-					color: 'green',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop4',
-					color: 'green',
+					color: _.sample(colors),
 				},
 			],
 			deck: [
 				{
 					name: 'blur2',
-					color: 'purple',
+					color: _.sample(colors),
 				}
 			],
 		},
@@ -77,29 +223,29 @@ const board = new Board({
 			hand: [
 				{
 					name: 'fireball',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop',
-					color: 'green',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop2',
-					color: 'blue',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop3',
-					color: 'yellow',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop4',
-					color: 'orange',
+					color: _.sample(colors),
 				},
 			],
 			deck: [
 				{
 					name: 'blur2',
-					color: 'purple',
+					color: _.sample(colors),
 				}
 			],
 		},
@@ -108,37 +254,37 @@ const board = new Board({
 			hand: [
 				{
 					name: 'fireball',
-					color: 'red',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop',
-					color: 'green',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop2',
-					color: 'blue',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop3',
-					color: 'yellow',
+					color: _.sample(colors),
 				},
 				{
 					name: 'bloop4',
-					color: 'orange',
+					color: _.sample(colors),
 				},
 			],
 			deck: [
 				{
 					name: 'blur2',
-					color: 'purple',
+					color: _.sample(colors),
 				},
 				{
 					name: 'blur2',
-					color: 'purple',
+					color: _.sample(colors),
 				},
 				{
 					name: 'blur2',
-					color: 'purple',
+					color: _.sample(colors),
 				},
 			],
 		},
@@ -167,6 +313,12 @@ const uiState = {
 
 board.on('cardClick', function(card){
 	const player = card.getRoot('Player');
+	const cardGroup = card.getRoot('CardGroup');
+
+	if(cardGroup.groupType==='deck'){
+		cardGroup.shuffle();
+		return board.setMeshPositionDeep();
+	}
 
 	if(player === uiState.focusedPlayer){
 		if(uiState.focusedCard){

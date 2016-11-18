@@ -10,6 +10,7 @@ class Card extends Renderable{
 		_.defaults(this, {
 			width: 65,
 			height: 100,
+			tweenStyle: 'dramatic',
 		})
 	}
 
@@ -79,32 +80,49 @@ class Card extends Renderable{
 		return 'y'
 	}
 
-	tweenPos(){
-		const tweenTime = 400+(Math.random()*100);
+	tweenToAbsPos(){
+		// TODO: For shuffling, should still animate
+		if(_.isMatch(this.absPos, this.mesh.position)){
+			return;
+		}
+
+		const tweenNames = {
+			dramatic: this.tweenToAbsPosDramatic,
+			shuffle: this.tweenToAbsPosShuffle
+		}
+		return tweenNames[this.tweenStyle].call(this);
+	}
+
+	tweenToAbsPosShuffle(){
+		const leftOrRight = (_.random()*2)-1;
+		const halfPoint = {
+			x: (30*leftOrRight) + this.mesh.position.x+(this.absPos.x-this.mesh.position.x)/2,
+			y: this.mesh.position.y+(this.absPos.y-this.mesh.position.y)/2,
+			z: this.mesh.position.z+(this.absPos.z-this.mesh.position.z)/2,
+		};
+		return this.tweenTo(halfPoint, 'Sinusoidal.In')
+			.then(this.tweenTo.bind(this, this.absPos, 'Sinusoidal.Out'));
+	}
+
+	tweenToAbsPosDramatic(){
 		const halfPoint = {
 			x: this.mesh.position.x+(this.absPos.x-this.mesh.position.x)/2,
 			y: this.mesh.position.y+(this.absPos.y-this.mesh.position.y)/2,
 			z: 100+this.mesh.position.z+(this.absPos.z-this.mesh.position.z)/2,
 		};
-		new TWEEN.Tween(this.mesh.position)
-			.to(halfPoint, tweenTime)
-			.easing(TWEEN.Easing.Sinusoidal.In)
-			.onComplete(()=>{
+		return this.tweenTo(halfPoint, 'Sinusoidal.In')
+			.then(this.tweenTo.bind(this, this.absPos, 'Sinusoidal.Out'));
+	}
 
-				new TWEEN.Tween(this.mesh.position)
-					.to({
-						x: this.absPos.x,
-						y: this.absPos.y,
-						z: this.absPos.z,
-					}, tweenTime)
-					.easing(TWEEN.Easing.Sinusoidal.Out)
-					.onComplete(function(){
-
-					})
-					.start();
-			})
-			.start();
-
+	tweenTo(position, easing){
+		const tweenTime = 400+(Math.random()*100);
+		return new Promise((resolve, reject)=>{
+			new TWEEN.Tween(this.mesh.position)
+				.to(position, tweenTime)
+				.easing(_.get(TWEEN.Easing, easing))
+				.onComplete(resolve)
+				.start();
+		})
 	}
 
 	tweenRotation(){
@@ -122,11 +140,10 @@ class Card extends Renderable{
 		}, tweenTime/2)
 	}
 
+	// @override
 	setMeshPosition(){
 		this.mesh = this.mesh || this.makeMesh();
-		if(!_.isMatch(this.absPos, this.mesh.position)){
-			this.tweenPos();
-		}
+		this.tweenToAbsPos();
 		this.tweenRotation();
 	}
 

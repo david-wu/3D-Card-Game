@@ -15,12 +15,12 @@ class CardGroup extends Renderable{
 
 	}
 
+	// @override
 	setRelativePosition(){
 		if(groupTypeIndex[this.groupType]){
 			groupTypeIndex[this.groupType].positionChildren(this.children);
 		}
 	}
-
 
 	shuffle(){
 		this.children = _.shuffle(this.children);
@@ -71,11 +71,14 @@ const groupTypeIndex = {
 
 	deck:{
 		positionChildren: function(cards){
+			const distanceBetweenCards = 1;
+			const startingHeight = (cards.length-1)*distanceBetweenCards;
 			_.each(cards, function(card, i){
+				card.tweenStyle = 'shuffle';
 				card.moveTo({
 					x: -262.5,
 					y: 0,
-					z: (i*cards.length)-i,
+					z: startingHeight-(i*distanceBetweenCards),
 				});
 				card.faceUp = false;
 			});
