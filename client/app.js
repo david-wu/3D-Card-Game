@@ -8,15 +8,7 @@ require('./lib/TrackBallControls.js')(THREE);
 const Board = require('./components/board/Board.js');
 
 const board = new Board({
-	centerGroup: {
-		groupType: 'center',
-		children: [
-			{
-				name: 'fireball',
-				color: 'red',
-			},
-		]
-	},
+	renderer: renderer,
 	players: [
 		{
 			name: 'bill1',
@@ -153,37 +145,43 @@ const board = new Board({
 	]
 });
 
+
+const Renderer = require('./components/Renderer.js');
+const renderer = new Renderer({
+	width: window.innerWidth,
+	height: window.innerHeight,
+	context: document.getElementById('root'),
+	board: board,
+})
+
+
+board.dramaticEntry();
 board.setMeshPositionDeep();
 
 
-let selectedCard;
+
+const uiState = {
+	focusedPlayer: board.players[0],
+	focusedCard: false,
+}
+
 board.on('cardClick', function(card){
-
 	const player = card.getRoot('Player');
-	board.setCameraOnPlayer(player);
 
-	if(selectedCard){
-		card.swapPosition(selectedCard);
-		board.setMeshPositionDeep();
-		selectedCard = undefined;
-	}else{
-		selectedCard = card;
+	if(player === uiState.focusedPlayer){
+		if(uiState.focusedCard){
+			card.swapPosition(uiState.focusedCard);
+			board.setMeshPositionDeep();
+			uiState.focusedCard = undefined;
+		}else{
+			uiState.focusedCard = card;
+		}
 	}
+
+	uiState.focusedPlayer = player;
+	return board.setCameraOnPlayer(player)
+
 });
-
-
-// setInterval(function(){
-// 	_.each(board.players, function(player){
-// 		player.hand.shuffle();
-
-// 		let type = player.field.groupType
-// 		player.field.groupType = player.hand.groupType
-// 		player.hand.groupType = type
-
-// 	})
-// 	board.players = _.shuffle(board.players);
-// 	board.setMeshPositionDeep();
-// }, 1000)
 
 
 

@@ -27,6 +27,8 @@ class Placeable extends TreeNode{
 	setRelativePosition(){}
 
 	setAbsolutePositionDeep(){
+
+		// Set rotation matrices
 		this.depthFirstTraverse(function(node){
 			node.absPos = {
 				x: 0,
@@ -43,17 +45,13 @@ class Placeable extends TreeNode{
 			}
 		});
 
+		// Use rotation matrices
 		this.depthFirstTraverse(function(node){
 			rotatePos(node.pos, node.absPos.rotationMatrix, node.absPos);
 			if(node.parent){
-				sumPos(node.absPos, node.parent.absPos);
+				sumPos(node.absPos, node.parent.absPos, node.absPos);
 			}
 		})
-	}
-
-	getRotatedPosition(angle){
-		const rotationMatrix = getRotationMatrix(angle)
-		return rotatePos(this.pos, rotationMatrix);
 	}
 
 }
@@ -78,10 +76,11 @@ function rotatePos(pos, rotationMatrix, recycle={}){
 	return recycle;
 }
 
-function sumPos(pos1, pos2){
-	pos1.x += (pos2.x || 0);
-	pos1.y += (pos2.y || 0);
-	pos1.z += (pos2.z || 0);
+function sumPos(pos1, pos2, recycle={}){
+	recycle.x = pos1.x + (pos2.x || 0);
+	recycle.y = pos1.y + (pos2.y || 0);
+	recycle.z = pos1.z + (pos2.z || 0);
+	return recycle;
 }
 
 module.exports = Placeable;

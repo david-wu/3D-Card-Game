@@ -19,15 +19,14 @@ class TreeNode extends EventEmitter{
 	}
 
 	addChild(target, index=0){
-		this.children.splice(index, 0, target);
 		target.parent = this;
+		this.children.splice(index, 0, target);
 	}
 
 	removeChild(target){
 		const index = this.getChildIndex(target);
-		this.children.splice(index, 1);
 		target.parent = undefined;
-		return index;
+		return this.children.splice(index, 1)[0];
 	}
 
 	setChildren(children=[]){
@@ -79,10 +78,13 @@ class TreeNode extends EventEmitter{
 		}
 	}
 
+	// Skips undefined children
 	depthFirstTraverse(iteratee){
 		iteratee(this);
 		_.each(this.children, function(child){
-			child.depthFirstTraverse(iteratee);
+			if(!_.isUndefined(child)){
+				child.depthFirstTraverse(iteratee);
+			}
 		})
 	}
 

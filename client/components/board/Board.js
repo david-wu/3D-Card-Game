@@ -7,124 +7,132 @@ class Board extends Renderable{
 
 	constructor(options){
 		super()
-
 		_.extend(this, options);
-
-		const dimensions = [1800, 1800];
 		_.defaults(this, {
-			dimensions: dimensions,
 			players: [],
-			centerGroup: {
-				groupType: 'center',
-				children: [],
-			},
-			playerSlots: [
-				{
-					startingPos: {
-						x: 0,
-						y: -dimensions[1]/2,
-						z: 0,
-						angle: 0,							
-					},
-					cameraPos: {
-						x: 0,
-						y: -2000,
-						z: 500,
-					}
-				},
-				{
-					startingPos: {
-						x: 0,
-						y: -dimensions[1]/2,
-						z: 0,
-						angle: 90,							
-					},
-					cameraPos: {
-						x: 2000,
-						y: 0,
-						z: 500,							
-					}
-				},
-				{
-					startingPos: {
-						x: 0,
-						y: -dimensions[1]/2,
-						z: 0,
-						angle: 180,							
-					},
-					cameraPos: {
-						x: 0,
-						y: 2000,
-						z: 500,							
-					}
-				},
-				{
-					startingPos: {
-						x: 0,
-						y: -dimensions[1]/2,
-						z: 0,
-						angle: 270,							
-					},
-					cameraPos: {
-						x: -2000,
-						y: 0,
-						z: 500,							
-					}
-				},
-			],
 		})
 
-		this.players = _.map(this.players, (player, i)=>{
-			_.extend(player, this.playerSlots[i]);
+		this.slotPlayers(options.players);
+	}
+
+	slotPlayers(players){
+		this.players = _.map(players, (player, i)=>{
+			_.extend(player, this.getPlayerSlot(i));
 			return new Player(player);
 		});
-		this.centerGroup = new CardGroup(this.centerGroup);
-		this.setChildren(this.players.concat(this.centerGroup));
-
-		this.dramaticEntry();
+		this.setChildren(this.players);
 	}
 
+	// @override
 	setRelativePosition(){
-		this.positionPlayers();
-		this.positionCenterGroup();
-	}
-
-	positionPlayers(){
 		_.each(this.players, (player)=>{
 			player.moveTo(player.startingPos);
 		});
 	}
 
-	positionCenterGroup(){
-		this.centerGroup.moveTo({
-			x: 0,
-			y: 0,
-			z: 200,
-			angle: 0,
+	setCameraOnPlayer(player){
+		return Promise.all([this.setCameraUpright(), this.setCameraAtPlayer(player)])
+	}
+
+	setCameraUpright(){
+		return new Promise((resolve)=>{
+			new TWEEN.Tween(this.renderer.components.camera.up)
+				.to({x:0, y: 0, z: 1}, 1000)
+				.easing(TWEEN.Easing.Cubic.InOut)
+				.onComplete(resolve)
+				.start();
 		});
 	}
 
-	setCameraOnPlayer(player){
-		this.components.camera.up.set(0,0,1);
-		new TWEEN.Tween(this.components.camera.position)
-			.to(player.cameraPos, 1000)
-			.easing(TWEEN.Easing.Cubic.InOut)
-			.start();
+	setCameraAtPlayer(player){
+		return new Promise((resolve)=>{
+			new TWEEN.Tween(this.renderer.components.camera.position)
+				.to(player.cameraPos, 1000)
+				.easing(TWEEN.Easing.Cubic.InOut)
+				.onComplete(resolve)
+				.start();
+		});
 	}
 
 	dramaticEntry(){
-		this.components.camera.position.z = 4000
-		this.components.camera.position.y = -4000
+		this.renderer.components.camera.position.z = 4000
+		this.renderer.components.camera.position.y = -4000
 
-		new TWEEN.Tween(this.components.camera.position)
-			.to({
-				x: 0,
-				y: -2000,
-				z: 500,
-			}, 3000)
-			.easing(TWEEN.Easing.Cubic.InOut)
-			.start();
+		this.renderer.components.camera.up.set(0, 0, 1);
+		return new Promise((resolve)=>{
+			new TWEEN.Tween(this.renderer.components.camera.position)
+				.to({
+					x: 0,
+					y: -2000,
+					z: 500,
+				}, 3000)
+				.easing(TWEEN.Easing.Cubic.InOut)
+				.onComplete(resolve)
+				.start();
+		});
+	}
 
+	getPlayerSlot(index){
+		const dimensions = this.getDimensions();
+		const playerSlots = [
+			{
+				startingPos: {
+					x: 0,
+					y: -dimensions[1]/2,
+					z: 0,
+					angle: 0,
+				},
+				cameraPos: {
+					x: 0,
+					y: -2000,
+					z: 500,
+				}
+			},
+			{
+				startingPos: {
+					x: 0,
+					y: -dimensions[1]/2,
+					z: 0,
+					angle: 90,
+				},
+				cameraPos: {
+					x: 2000,
+					y: 0,
+					z: 500,
+				}
+			},
+			{
+				startingPos: {
+					x: 0,
+					y: -dimensions[1]/2,
+					z: 0,
+					angle: 180,
+				},
+				cameraPos: {
+					x: 0,
+					y: 2000,
+					z: 500,
+				}
+			},
+			{
+				startingPos: {
+					x: 0,
+					y: -dimensions[1]/2,
+					z: 0,
+					angle: 270,
+				},
+				cameraPos: {
+					x: -2000,
+					y: 0,
+					z: 500,
+				}
+			},
+		];
+		return playerSlots[index];
+	}
+
+	getDimensions(){
+		return [1800, 1800];
 	}
 
 }

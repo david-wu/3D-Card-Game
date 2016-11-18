@@ -1,10 +1,4 @@
 const Placeable = require('./Placeable.js');
-const Renderer = require('./Renderer.js');
-
-const renderer = new Renderer()
-renderer.startRendering()
-
-const components = renderer.components;
 
 class Renderable extends Placeable{
 
@@ -12,7 +6,6 @@ class Renderable extends Placeable{
 		super(options);
 		_.extend(this, options)
 		_.defaults(this, {
-			components: components
 		})
 	}
 

@@ -26,14 +26,21 @@ class Card extends Renderable{
 	}
 
 	swapPosition(target){
+		const parent = this.parent;
 		const targetParent = target.parent;
-		const thisParent = this.parent;
 
-		const targetIndex = targetParent.removeChild(target);
-		const thisIndex = thisParent.removeChild(this);
+		const index = parent.getChildIndex(this);
+		const targetIndex = targetParent.getChildIndex(target);
 
-		targetParent.addChild(this, targetIndex);
-		thisParent.addChild(target, thisIndex);
+		if(parent===targetParent){
+			parent.children[targetIndex] = this;
+			parent.children[index] = target;
+		}else{
+			parent.removeChild(this);
+			targetParent.removeChild(target);
+			parent.addChild(target, index);
+			targetParent.addChild(this, targetIndex);
+		}
 	}
 
 	makeMesh(){
@@ -55,7 +62,10 @@ class Card extends Renderable{
 		number.textContent = this.name;
 		element.appendChild(number);
 		const mesh = new THREE.CSS3DObject(element)
-		this.components.scene.add(mesh);
+
+		const board = this.getRoot('Board');
+		board.emit('newMesh', mesh);
+
 		return mesh;
 	}
 
@@ -91,7 +101,7 @@ class Card extends Renderable{
 					.onComplete(function(){
 
 					})
-					.start();			
+					.start();
 			})
 			.start();
 
@@ -115,7 +125,7 @@ class Card extends Renderable{
 	setMeshPosition(){
 		this.mesh = this.mesh || this.makeMesh();
 		if(!_.isMatch(this.absPos, this.mesh.position)){
-			this.tweenPos();			
+			this.tweenPos();
 		}
 		this.tweenRotation();
 	}
