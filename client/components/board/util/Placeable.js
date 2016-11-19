@@ -12,6 +12,11 @@ class Placeable extends TreeNode{
 				z: 0,
 				angle: 0,
 			},
+			absPos: {
+				x: 0,
+				y: 0,
+				z: 0,
+			}
 		})
 	}
 
@@ -36,22 +41,28 @@ class Placeable extends TreeNode{
 				z: 0,
 				angle: node.parent ? node.parent.absPos.angle+node.pos.angle : node.pos.angle,
 			};
+			node.rotationMatrix = false;
 
 			// Reuse rotationMatrix if no change to absAngle
 			if(!node.pos.angle && node.parent){
-				node.absPos.rotationMatrix = node.parent.absPos.rotationMatrix
+				node.rotationMatrix = node.parent.rotationMatrix
 			}else{
-				node.absPos.rotationMatrix = getRotationMatrix(node.absPos.angle)
+				node.rotationMatrix = getRotationMatrix(node.absPos.angle)
 			}
 		});
 
 		// Use rotation matrices
 		this.depthFirstTraverse(function(node){
-			rotatePos(node.pos, node.absPos.rotationMatrix, node.absPos);
-			if(node.parent){
-				sumPos(node.absPos, node.parent.absPos, node.absPos);
-			}
-		})
+			node.getAbsPos(node.pos, node.absPos);
+		});
+	}
+
+	getAbsPos(relativePos, absPos={}){
+		rotatePos(relativePos, this.rotationMatrix, absPos);
+		if(this.parent){
+			sumPos(absPos, this.parent.absPos, absPos);
+		}
+		return absPos
 	}
 
 }

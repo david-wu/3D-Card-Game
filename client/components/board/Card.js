@@ -95,49 +95,64 @@ class Card extends Renderable{
 
 	tweenToAbsPosShuffle(){
 		const leftOrRight = (_.random()*2)-1;
-		const halfPoint = {
+		return this.tweenToWithHalfPoint({
 			x: (30*leftOrRight) + this.mesh.position.x+(this.absPos.x-this.mesh.position.x)/2,
 			y: this.mesh.position.y+(this.absPos.y-this.mesh.position.y)/2,
 			z: this.mesh.position.z+(this.absPos.z-this.mesh.position.z)/2,
-		};
-		return this.tweenTo(halfPoint, 'Sinusoidal.In')
-			.then(this.tweenTo.bind(this, this.absPos, 'Sinusoidal.Out'));
+		})
 	}
 
 	tweenToAbsPosDramatic(){
-		const halfPoint = {
+		return this.tweenToWithHalfPoint({
 			x: this.mesh.position.x+(this.absPos.x-this.mesh.position.x)/2,
 			y: this.mesh.position.y+(this.absPos.y-this.mesh.position.y)/2,
 			z: 100+this.mesh.position.z+(this.absPos.z-this.mesh.position.z)/2,
-		};
-		return this.tweenTo(halfPoint, 'Sinusoidal.In')
-			.then(this.tweenTo.bind(this, this.absPos, 'Sinusoidal.Out'));
-	}
-
-	tweenTo(position, easing){
-		const tweenTime = 400+(Math.random()*100);
-		return new Promise((resolve, reject)=>{
-			new TWEEN.Tween(this.mesh.position)
-				.to(position, tweenTime)
-				.easing(_.get(TWEEN.Easing, easing))
-				.onComplete(resolve)
-				.start();
 		})
 	}
 
 	tweenRotation(){
-		const tweenTime = 400+(Math.random()*100);
-		setTimeout(()=>{
-			const targetRotation = {
-				z: this.absPos.angle*Math.PI/180,
-			}
-			targetRotation[this.getFlipAxis()] = this.faceUp ? 0 : (Math.PI);
+		const targetRotation = {
+			z: this.absPos.angle*Math.PI/180,
+			[this.getFlipAxis()]: this.faceUp ? 0 : (Math.PI),
+		}
+		this.tweenTo({
+			start: this.mesh.rotation,
+			end: targetRotation,
+			easing: 'Linear.None',
+			delay: 200,
+		})
+	}
 
-			new TWEEN.Tween(this.mesh.rotation)
-				.to(targetRotation, tweenTime)
-				.easing(TWEEN.Easing.Linear.None)
-				.start();
-		}, tweenTime/2)
+	tweenToWithHalfPoint(halfPoint){
+		return this.tweenTo({
+				end: halfPoint,
+				easing: 'Sinusoidal.In'
+			})
+			.then(()=>{
+				this.tweenTo({
+					easing: 'Sinusoidal.Out'
+				})
+			})
+	}
+
+	tweenTo(options){
+		_.defaults(options, {
+			start: this.mesh.position,
+			end: this.absPos,
+			easing: 'Sinusoidal.InOut',
+			tweenTime: 400,
+			delay: 0,
+			randomFactor: 50
+		})
+		return new Promise((resolve, reject)=>{
+			setTimeout(function(){
+				new TWEEN.Tween(options.start)
+					.to(options.end, options.tweenTime)
+					.easing(_.get(TWEEN.Easing, options.easing))
+					.onComplete(resolve)
+					.start();
+			}, options.delay+(options.randomFactor*Math.random()))
+		})
 	}
 
 	// @override
