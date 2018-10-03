@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "gulp",
+    "serve": " nodemon server/app.js"
+  },
   "dependencies": {
     "babel": "^6.5.2",
     "babel-loader": "^6.2.7",
